@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Bell System | Add New Event</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #daf0ff 100%);
+      --text-color: #232b33;
+      --card-bg: #ffffffcc;
+      --accent: #287ee6;
+      --accent-light: #61a0ee;
+      --header-gradient: linear-gradient(90deg, #287ee6 0%, #43e97b 100%);
+      --shadow-card: 0 8px 32px 0 rgba(60, 90, 130, 0.15);
+    }
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #2a2b38 0%, #1a272e 100%);
+      --text-color: #e0f6ff;
+      --card-bg: #222231cc;
+      --accent: #43e97b;
+      --accent-light: #2979ff;
+      --header-gradient: linear-gradient(90deg, #1f4c70 0%, #43e97b 100%);
+      --shadow-card: 0 8px 40px 0 rgba(20,40,70,0.35);
+    }
+    html,
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s;
+      padding: 0 15px 40px 15px;
+    }
+    .header {
+      background: var(--header-gradient);
+      color: #fff;
+      font-size: 2rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      padding: 30px 40px 24px 40px;
+      text-align: center;
+      margin: 35px auto 35px auto;
+      max-width: 680px;
+      position: relative;
+    }
+    .header a {
+      position: absolute;
+      right: 34px;
+      top: 36px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: 'Montserrat', sans-serif;
+      background: rgba(255, 255, 255, 0.13);
+      padding: 7px 14px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px 0 rgba(40, 126, 230, 0.04);
+      transition: background 0.3s, color 0.15s;
+    }
+    .header a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .content {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      padding: 30px 40px 40px 40px;
+      max-width: 680px;
+      margin: 0 auto 0 auto;
+      backdrop-filter: blur(2.5px);
+      animation: fadein-up 1.2s;
+      font-size: 1.07rem;
+    }
+    @keyframes fadein-up {
+      0% {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    label {
+      display: block;
+      margin-top: 18px;
+      font-weight: 600;
+    }
+    input[type='text'],
+    input[type='time'],
+    input[type='date'],
+    select,
+    textarea {
+      margin-top: 8px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 8px;
+      border: 1.5px solid #aaa;
+      transition: border-color 0.25s ease;
+      font-family: 'Roboto', sans-serif;
+      box-sizing: border-box;
+    }
+    input[type='text']:focus,
+    input[type='time']:focus,
+    input[type='date']:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+    .helper-text {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 3px;
+    }
+    .switch-container {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .switch-container label {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    input[type='checkbox'] {
+      width: auto;
+      height: 20px;
+      cursor: pointer;
+    }
+    button {
+      margin-top: 30px;
+      padding: 14px 26px;
+      border-radius: 9px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+      max-width: 260px;
+    }
+    button:hover {
+      background: var(--accent-light);
+    }
+    .tab-container {
+      margin-top: 18px;
+      display: flex;
+      gap: 14px;
+      border-bottom: 2px solid #ccc;
+      user-select: none;
+    }
+    .tab {
+      padding: 10px 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      background: #e3f0ff;
+      color: var(--accent);
+      transition: background 0.3s, color 0.3s;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 8px var(--accent-light);
+    }
+    .form-section {
+      margin-top: 26px;
+    }
+    .hidden {
+      display: none;
+    }
+    .error-message {
+      color: #e63f3f;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+    footer {
+      margin-top: 35px;
+      text-align: center;
+      color: #5e7996;
+      font-size: 1.07rem;
+      opacity: 0.75;
+      letter-spacing: 0.1px;
+    }
+    @media (max-width: 720px) {
+      .header {
+        font-size: 1.5rem;
+        padding: 26px 20px 20px 20px;
+      }
+      .tab-container {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      button {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="digital-clock"></div>
+    ADD NEW EVENT
+    <a href="index.html">Back to Events</a>
+  </div>
+
+  <div class="content">
+    <div class="tab-container">
+      <div class="tab active" data-target="normalForm">Normal Event</div>
+      <div class="tab" data-target="specialForm">Special Event</div>
+    </div>
+
+    <!-- Normal Event Form -->
+    <form id="normalForm" class="form-section">
+      <label for="normal-title">Title *</label>
+      <input type="text" id="normal-title" name="title" required placeholder="Event title" />
+
+      <label for="normal-time">Time *</label>
+      <input type="time" id="normal-time" name="time" required />
+
+      <label for="normal-delay">Delay (in seconds)</label>
+      <input type="text" id="normal-delay" name="delay" placeholder="E.g., 0" value="0" />
+
+      <label for="normal-tone">Tone *</label>
+      <select id="normal-tone" name="tone" required>
+        <option value="">Select a tone</option>
+        <option value="tone1">Tone 1</option>
+        <option value="tone2">Tone 2</option>
+        <option value="tone3">Tone 3</option>
+        <!-- Add your actual tones here -->
+      </select>
+
+      <label>Active *</label>
+      <div class="switch-container">
+        <label for="normal-active">Is this event active?</label>
+        <input type="checkbox" id="normal-active" name="active" checked />
+      </div>
+
+      <label for="normal-frequency">Frequency (days of the week) *</label>
+      <select id="normal-frequency" name="frequency" multiple size="7" required>
+        <option value="monday">Monday</option>
+        <option value="tuesday">Tuesday</option>
+        <option value="wednesday">Wednesday</option>
+        <option value="thursday">Thursday</option>
+        <option value="friday">Friday</option>
+        <option value="saturday">Saturday</option>
+        <option value="sunday">Sunday</option>
+      </select>
+      <div class="helper-text">Hold Ctrl (Cmd on Mac) to select multiple days.</div>
+
+      <div id="normal-error" class="error-message" aria-live="polite"></div>
+
+      <button type="submit">Add Normal Event</button>
+    </form>
+
+    <!-- Special Event Form -->
+    <form id="specialForm" class="form-section hidden">
+      <label for="special-date">Date *</label>
+      <input type="date" id="special-date" name="date" required />
+
+      <label for="special-time">Time *</label>
+      <input type="time" id="special-time" name="time" required />
+
+      <label for="special-description">Description *</label>
+      <textarea id="special-description" name="description" required placeholder="Description..."></textarea>
+
+      <label for="special-tone">Tone *</label>
+      <select id="special-tone" name="tone" required>
+        <option value="">Select a tone</option>
+        <option value="tone1">Tone 1</option>
+        <option value="tone2">Tone 2</option>
+        <option value="tone3">Tone 3</option>
+        <!-- Add your actual tones here -->
+      </select>
+
+      <label>Completed *</label>
+      <div class="switch-container">
+        <label for="special-completed">Is this event completed?</label>
+        <input type="checkbox" id="special-completed" name="completed" />
+      </div>
+
+      <div id="special-error" class="error-message" aria-live="polite"></div>
+
+      <button type="submit">Add Special Event</button>
+    </form>
+  </div>
+
+  <footer>&copy; 2025 Smart Bell System</footer>
+
+  <script>
+    const API_BASE = 'http://localhost:5000/api';
+
+    function updateClock() {
+      const clock = document.getElementById('digital-clock');
+      const now = new Date();
+      clock.innerText = now.toLocaleTimeString();
+    }
+
+    // Tab switching logic
+    const tabs = document.querySelectorAll('.tab');
+    const normalForm = document.getElementById('normalForm');
+    const specialForm = document.getElementById('specialForm');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        if (tab.dataset.target === 'normalForm') {
+          normalForm.classList.remove('hidden');
+          specialForm.classList.add('hidden');
+        } else {
+          specialForm.classList.remove('hidden');
+          normalForm.classList.add('hidden');
+        }
+      });
+    });
+
+    // Helper to get selected multi-select values as lowercase string array
+    function getSelectedDays(selectElement) {
+      return Array.from(selectElement.selectedOptions).map(opt => opt.value.toLowerCase());
+    }
+
+    // Handle Normal Event Form submission
+    normalForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorDiv = document.getElementById('normal-error');
+      errorDiv.textContent = '';
+
+      const title = document.getElementById('normal-title').value.trim();
+      const time = document.getElementById('normal-time').value;
+      const delayStr = document.getElementById('normal-delay').value.trim();
+      const tone = document.getElementById('normal-tone').value;
+      const active = document.getElementById('normal-active').checked;
+      const frequency = getSelectedDays(document.getElementById('normal-frequency'));
+
+      if (!title || !time || !tone || frequency.length === 0) {
+        errorDiv.textContent = 'Please fill in all required fields and select frequency days.';
+        return;
+      }
+
+      const delay = parseInt(delayStr) || 0;
+      if (delay < 0) {
+        errorDiv.textContent = 'Delay cannot be negative.';
+        return;
+      }
+
+      // Prepare data as JSON to match backend expected model
+      const payload = {
+        title,
+        time,
+        delay,
+        tone,
+        active,
+        frequency
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/normalEvents`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('Normal event added successfully!');
+          normalForm.reset();
+          // Optionally keep defaults:
+          document.getElementById('normal-delay').value = '0';
+          document.getElementById('normal-active').checked = true;
+          // Deselect all frequency
+          const freqSelect = document.getElementById('normal-frequency');
+          for (let i = 0; i < freqSelect.options.length; i++) {
+            freqSelect.options[i].selected = false;
+          }
+        } else {
+          errorDiv.textContent = data.error || 'Failed to add normal event.';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+      }
+    });
+
+    // Handle Special Event Form submission
+    specialForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorDiv = document.getElementById('special-error');
+      errorDiv.textContent = '';
+
+      const date = document.getElementById('special-date').value;
+      const time = document.getElementById('special-time').value;
+      const description = document.getElementById('special-description').value.trim();
+      const tone = document.getElementById('special-tone').value;
+      const completed = document.getElementById('special-completed').checked;
+
+      if (!date || !time || !description || !tone) {
+        errorDiv.textContent = 'Please fill in all required fields.';
+        return;
+      }
+
+      // Prepare data as JSON to match backend expected model
+      const payload = {
+        date,
+        time,
+        description,
+        tone,
+        completed
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/specialEvents`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alert('Special event added successfully!');
+          specialForm.reset();
+        } else {
+          errorDiv.textContent = data.error || 'Failed to add special event.';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+      }
+    });
+
+    window.onload = () => {
+      // Initialize clock
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    };
+  </script>
+</body>
+</html>
