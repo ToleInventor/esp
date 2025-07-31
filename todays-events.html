@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Bell System | Today's Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&family=Montserrat:wght@700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <style>
+    /* Same styles from index.html, to keep UI consistent */
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #daf0ff 100%);
+      --text-color: #232b33;
+      --card-bg: #ffffffcc;
+      --accent: #287ee6;
+      --accent-light: #61a0ee;
+      --header-gradient: linear-gradient(90deg, #287ee6 0%, #43e97b 100%);
+      --shadow-card: 0 8px 32px 0 rgba(60, 90, 130, 0.15);
+      --shadow-btn: 0 4px 12px 0 rgba(40, 126, 230, 0.12);
+    }
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #2a2b38 0%, #1a272e 100%);
+      --text-color: #e0f6ff;
+      --card-bg: #222231cc;
+      --accent: #43e97b;
+      --accent-light: #2979ff;
+      --header-gradient: linear-gradient(90deg, #1f4c70 0%, #43e97b 100%);
+      --shadow-card: 0 8px 40px 0 rgba(20,40,70,0.35);
+      --shadow-btn: 0 4px 14px 0 rgba(67,233,123,0.18);
+    }
+    html,
+    body {
+      height: 100%;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+      transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s;
+    }
+    .header {
+      background: var(--header-gradient);
+      color: #fff;
+      font-size: 2rem;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      padding: 30px 40px 24px 40px;
+      text-align: center;
+      margin: 35px 0 35px 0;
+      position: relative;
+    }
+    .header a {
+      position: absolute;
+      right: 34px;
+      top: 36px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: "Montserrat", sans-serif;
+      background: rgba(255, 255, 255, 0.13);
+      padding: 7px 14px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px 0 rgba(40, 126, 230, 0.04);
+      transition: background 0.3s, color 0.15s;
+    }
+    .header a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    #digital-clock {
+      font-size: 1.3rem;
+      margin-bottom: 7px;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #e3ffd9;
+      text-shadow: 0 2px 7px rgba(40, 126, 230, 0.14);
+      animation: fadein-up 900ms;
+    }
+    .current-alarms {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      padding: 40px 40px 35px 40px;
+      max-width: 680px;
+      margin: 0 auto 24px auto;
+      backdrop-filter: blur(2.5px);
+      animation: fadein-up 1.2s;
+      transition: background 0.3s;
+    }
+    @keyframes fadein-up {
+      0% {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    .current-alarms h2 {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.27rem;
+      color: var(--accent);
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 1px;
+    }
+    #events-list {
+      min-height: 70px;
+      margin-bottom: 32px;
+      padding: 20px 16px;
+      background: rgba(97, 160, 238, 0.065);
+      border-radius: 13px;
+      box-shadow: 0 3px 10px rgba(40, 126, 230, 0.06);
+      font-size: 1.07rem;
+      transition: background 0.2s;
+      animation: fadein-up 1.35s;
+    }
+    .event-card {
+      background: rgba(255, 255, 255, 0.85);
+      margin-bottom: 17px;
+      border-radius: 9px;
+      box-shadow: 0 1px 8px 0 rgba(40, 126, 230, 0.07);
+      padding: 14px 18px 13px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+      transition: box-shadow 0.22s;
+      animation: fadein-up 1.3s;
+    }
+    .event-icon {
+      font-size: 1.33rem;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+    .event-icon.normal {
+      color: var(--accent);
+    }
+    .event-icon.special {
+      color: var(--accent-light);
+    }
+    .event-details {
+      flex: 1;
+    }
+    .event-title {
+      font-weight: bold;
+      font-size: 1.09rem;
+      letter-spacing: 0.7px;
+      margin-bottom: 4px;
+    }
+    .event-meta {
+      font-size: 0.98rem;
+      color: #4660aa;
+      font-style: italic;
+      margin-bottom: 1px;
+    }
+    .source-label {
+      font-size: 0.85rem;
+      color: #646f7b;
+      background: #ddeeff;
+      border-radius: 6px;
+      padding: 2px 10px;
+      align-self: flex-start;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      user-select: none;
+      margin-top: 12px;
+    }
+    .no-events {
+      font-style: italic;
+      color: #888aa9;
+      padding: 8px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    footer {
+      margin-top: 35px;
+      text-align: center;
+      color: #5e7996;
+      font-size: 1.07rem;
+      opacity: 0.75;
+      letter-spacing: 0.1px;
+    }
+    @media (max-width: 700px) {
+      .current-alarms {
+        padding: 19px 5vw 20px 5vw;
+      }
+      .header {
+        font-size: 1.3rem;
+        padding: 16px 12px 12px 12px;
+      }
+      .header a {
+        right: 13px;
+        top: 18px;
+        font-size: 0.97rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="digital-clock"></div>
+    TODAY'S EVENTS
+    <a href="index.html">All Events</a>
+  </div>
+
+  <div class="current-alarms">
+    <h2><i class="fa-solid fa-calendar-check"></i> Events for Today</h2>
+    <div id="events-list">
+      <span class="no-events">Loading today's events...</span>
+    </div>
+  </div>
+
+  <footer>&copy; 2025 Smart Bell System</footer>
+
+  <script>
+    const API_BASE = "http://localhost:5000/api";
+
+    // Render event cards coming from esp32 table
+    function renderEvent(ev) {
+      // ev has: id, title, time, delay, source ('normal' or 'special')
+      const iconClass = ev.source === "special" ? "special" : "normal";
+      const icon = ev.source === "special" ? "fa-star" : "fa-bell";
+
+      return `
+      <div class="event-card">
+        <i class="fa-solid ${icon} event-icon ${iconClass}"></i>
+        <div class="event-details">
+          <div class="event-title">${ev.title} — <span style="color:#287ee6">${ev.time}</span></div>
+          <div class="source-label">${ev.source.charAt(0).toUpperCase() + ev.source.slice(1)} Event</div>
+        </div>
+      </div>
+      `;
+    }
+
+    async function fetchTodaysEvents() {
+      try {
+        const res = await fetch(`${API_BASE}/esp32`);
+        if (!res.ok)
+          throw new Error("Failed to fetch today's events from the backend.");
+        return await res.json();
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function populateTodaysEvents() {
+      const container = document.getElementById("events-list");
+      const events = await fetchTodaysEvents();
+
+      container.innerHTML = events.length
+        ? events.map(renderEvent).join("")
+        : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No events scheduled for today.</span>`;
+    }
+
+    function updateClock() {
+      const clock = document.getElementById("digital-clock");
+      const now = new Date();
+      clock.innerText = now.toLocaleTimeString();
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme)
+        document.documentElement.setAttribute("data-theme", savedTheme);
+
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      populateTodaysEvents();
+    };
+  </script>
+</body>
+</html>
