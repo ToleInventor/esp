@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Bell System | Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&family=Montserrat:wght@700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #daf0ff 100%);
+      --text-color: #232b33;
+      --card-bg: #ffffffcc;
+      --accent: #287ee6;
+      --accent-light: #61a0ee;
+      --header-gradient: linear-gradient(90deg, #287ee6 0%, #43e97b 100%);
+      --shadow-card: 0 8px 32px 0 rgba(60, 90, 130, 0.15);
+    }
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #2a2b38 0%, #1a272e 100%);
+      --text-color: #e0f6ff;
+      --card-bg: #222231cc;
+      --accent: #43e97b;
+      --accent-light: #2979ff;
+      --header-gradient: linear-gradient(90deg, #1f4c70 0%, #43e97b 100%);
+      --shadow-card: 0 8px 40px 0 rgba(20,40,70,0.35);
+    }
+    html,
+    body {
+      height: 100%;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+      transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s;
+    }
+    .header {
+      background: var(--header-gradient);
+      color: #fff;
+      font-size: 2rem;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      padding: 30px 40px 24px 40px;
+      text-align: center;
+      margin: 35px 0 35px 0;
+      position: relative;
+    }
+    .header a {
+      position: absolute;
+      right: 34px;
+      top: 36px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: "Montserrat", sans-serif;
+      background: rgba(255, 255, 255, 0.13);
+      padding: 7px 14px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px 0 rgba(40, 126, 230, 0.04);
+      transition: background 0.3s, color 0.15s;
+    }
+    .header a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .content {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      padding: 40px 40px 35px 40px;
+      max-width: 680px;
+      margin: 0 auto 24px auto;
+      backdrop-filter: blur(2.5px);
+      animation: fadein-up 1.2s;
+      transition: background 0.3s;
+      font-size: 1.07rem;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+    input[type="checkbox"], input[type="text"] {
+      margin-top: 8px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 300px;
+      border-radius: 6px;
+      border: 1.5px solid #aaa;
+      transition: border-color 0.25s;
+    }
+    input[type="checkbox"] {
+      width: auto;
+      cursor: pointer;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    button {
+      margin-top: 30px;
+      padding: 14px 26px;
+      border-radius: 9px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: var(--accent-light);
+    }
+    footer {
+      margin-top: 35px;
+      text-align: center;
+      color: #5e7996;
+      font-size: 1.07rem;
+      opacity: 0.75;
+      letter-spacing: 0.1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="digital-clock"></div>
+    SETTINGS
+    <a href="index.html">Back to Events</a>
+  </div>
+
+  <div class="content">
+    <form id="settings-form">
+      <label for="dark-mode">Enable Dark Mode:</label>
+      <input type="checkbox" id="dark-mode" name="darkMode" />
+
+      <label for="timezone">Timezone (e.g., UTC, GMT+3):</label>
+      <input type="text" id="timezone" name="timezone" placeholder="Enter your timezone" />
+
+      <button type="submit">Save Settings</button>
+    </form>
+  </div>
+
+  <footer>&copy; 2025 Smart Bell System</footer>
+
+  <script>
+    function updateClock() {
+      const clock = document.getElementById("digital-clock");
+      const now = new Date();
+      clock.innerText = now.toLocaleTimeString();
+    }
+
+    window.onload = () => {
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      // Load saved settings
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.getElementById("dark-mode").checked = true;
+      }
+      const timezone = localStorage.getItem("timezone");
+      if (timezone) {
+        document.getElementById("timezone").value = timezone;
+      }
+
+      // Setup form submission handler
+      document.getElementById("settings-form").onsubmit = (e) => {
+        e.preventDefault();
+        const darkModeChecked = document.getElementById("dark-mode").checked;
+        const timezoneVal = document.getElementById("timezone").value.trim();
+
+        if (darkModeChecked) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+
+        localStorage.setItem("darkMode", darkModeChecked);
+        localStorage.setItem("timezone", timezoneVal);
+
+        alert("Settings saved!");
+      };
+    };
+  </script>
+</body>
+</html>
