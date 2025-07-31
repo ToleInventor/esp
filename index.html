@@ -12,6 +12,7 @@
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    crossorigin="anonymous"
   />
   <style>
     :root {
@@ -59,6 +60,7 @@
       text-align: center;
       margin: 35px 0 20px 0;
       position: relative;
+      user-select: none;
     }
     #digital-clock {
       font-size: 1.3rem;
@@ -107,16 +109,6 @@
     .btn-view-today:hover {
       background: #d9eaff;
       color: var(--accent);
-    }
-    .btn-add-new {
-      background: #43e97b;
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 2px 6px rgba(67, 233, 123, 0.7);
-    }
-    .btn-add-new:hover {
-      background: #31c763;
-      color: white;
     }
 
     .current-alarms {
@@ -255,23 +247,7 @@
       background-color: #b82b2b;
     }
 
-    .bottom {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 20px 30px;
-      border-radius: 50%;
-      font-size: 2rem;
-      box-shadow: var(--shadow-btn);
-      cursor: pointer;
-      transition: background 0.25s, box-shadow 0.18s;
-      margin-top: 23px;
-    }
-    .bottom:hover {
-      background: var(--accent-light);
-      box-shadow: 0 6px 24px var(--accent-light);
-    }
-
+    /* Floating Add New Event plus button at bottom */
     footer {
       margin-top: 35px;
       text-align: center;
@@ -279,9 +255,33 @@
       font-size: 1.07rem;
       opacity: 0.75;
       letter-spacing: 0.1px;
+      position: relative;
+      min-height: 80px;
+    }
+    footer a {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+    }
+    .bottom {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 20px 30px;
+      border-radius: 50%;
+      font-size: 2.5rem;
+      box-shadow: var(--shadow-btn);
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.18s;
+      user-select: none;
+    }
+    .bottom:hover {
+      background: var(--accent-light);
+      box-shadow: 0 8px 30px var(--accent-light);
     }
 
-    /* EDIT PANEL styles */
+    /* Edit panel styles */
     #edit-panel {
       max-width: 680px;
       margin: 24px auto;
@@ -293,6 +293,7 @@
       font-size: 1.07rem;
       animation: fadein-up 1s;
       display: none; /* hidden by default */
+      user-select: none;
     }
     #edit-panel h3 {
       margin-top: 0;
@@ -314,7 +315,6 @@
       padding: 8px 12px;
       font-size: 1rem;
       width: 100%;
-      max-width: 100%;
       border-radius: 7px;
       border: 1.5px solid #aaa;
       transition: border-color 0.25s ease;
@@ -339,6 +339,7 @@
       font-size: 1.1rem;
       cursor: pointer;
       transition: background 0.3s;
+      user-select: none;
     }
     #edit-panel button:hover {
       background: var(--accent-light);
@@ -357,7 +358,6 @@
       font-weight: 600;
       display: none;
     }
-    /* Multi-select frequency (checkbox group) style for edit form */
     #edit-frequency-group {
       margin-top: 6px;
       display: flex;
@@ -388,6 +388,10 @@
       #edit-panel {
         padding: 20px 20px;
       }
+      footer a {
+        bottom: 20px;
+        right: 20px;
+      }
     }
   </style>
 </head>
@@ -396,15 +400,14 @@
     <div id="digital-clock"></div>
     MANAGE BELL EVENTS
 
-    <div class="header-links">
-      <a href="settings.html" title="Settings">Settings</a>
-      <a href="todays-events.html" title="Today's Events">Today's Events</a>
-      <a href="todays-events.html" title="View Today's Events" class="btn-view-today">View Today's Events</a>
-      <a href="ADD NEW EVENT.html" title="Add New Event" class="btn-add-new">+ Add New Event</a>
+    <div class="header-links" role="navigation" aria-label="Main navigation">
+      <a href="settings.html" title="Settings" tabindex="0">Settings</a>
+      <a href="todays-events.html" title="Today's Events" tabindex="0">Today's Events</a>
+      <a href="todays-events.html" title="View Today's Events" class="btn-view-today" tabindex="0" role="button">View Today's Events</a>
     </div>
   </div>
 
-  <div class="current-alarms">
+  <div class="current-alarms" aria-live="polite" aria-atomic="true">
     <h2><i class="fa-regular fa-bell"></i> Normal Events</h2>
     <div id="normal-events-list"><span class="no-events">Loading normal events...</span></div>
 
@@ -412,8 +415,8 @@
     <div id="special-events-list"><span class="no-events">Loading special events...</span></div>
   </div>
 
-  <!-- Edit event panel - hidden by default -->
-  <section id="edit-panel" aria-live="polite">
+  <!-- Edit event panel -->
+  <section id="edit-panel" aria-live="polite" aria-atomic="true" aria-label="Edit event details">
     <h3>Edit Event</h3>
     <form id="edit-form" novalidate>
       <input type="hidden" id="edit-id" />
@@ -422,13 +425,13 @@
       <!-- Normal Event fields -->
       <div id="edit-normal-fields" class="edit-fields">
         <label for="edit-title">Title *</label>
-        <input type="text" id="edit-title" required />
+        <input type="text" id="edit-title" required autocomplete="off" />
 
         <label for="edit-time">Time *</label>
         <input type="time" id="edit-time" required />
 
         <label for="edit-delay">Delay (seconds)</label>
-        <input type="text" id="edit-delay" />
+        <input type="text" id="edit-delay" autocomplete="off" />
 
         <label for="edit-tone">Tone *</label>
         <select id="edit-tone" required>
@@ -464,7 +467,7 @@
         <input type="time" id="edit-time-special" required />
 
         <label for="edit-description">Description *</label>
-        <input type="text" id="edit-description" required />
+        <input type="text" id="edit-description" required autocomplete="off" />
 
         <label for="edit-tone-special">Tone *</label>
         <select id="edit-tone-special" required>
@@ -488,7 +491,9 @@
   </section>
 
   <footer>
-    &copy; 2025 Smart Bell System
+    <a href="ADD NEW EVENT.html" aria-label="Add New Event">
+      <button id="weka-alarm" class="bottom" title="Add New Event">+</button>
+    </a>
   </footer>
 
   <script>
@@ -514,8 +519,8 @@
                 : `<div class="event-status" style="color:#888a99;">Inactive</div>`
             }
             <div class="btn-group">
-              <button class="btn-edit" data-id="${ev.id}" data-type="normal">Edit</button>
-              <button class="btn-delete" data-id="${ev.id}" data-type="normal">Delete</button>
+              <button class="btn-edit" data-id="${ev.id}" data-type="normal" aria-label="Edit normal event ${ev.title}">Edit</button>
+              <button class="btn-delete" data-id="${ev.id}" data-type="normal" aria-label="Delete normal event ${ev.title}">Delete</button>
             </div>
           </div>
         </div>
@@ -533,8 +538,8 @@
             <div class="event-meta"><i class="fa-solid fa-calendar-day"></i> ${ev.date}</div>
             <div class="event-status">${status}</div>
             <div class="btn-group">
-              <button class="btn-edit" data-id="${ev.id}" data-type="special">Edit</button>
-              <button class="btn-delete" data-id="${ev.id}" data-type="special">Delete</button>
+              <button class="btn-edit" data-id="${ev.id}" data-type="special" aria-label="Edit special event ${ev.description}">Edit</button>
+              <button class="btn-delete" data-id="${ev.id}" data-type="special" aria-label="Delete special event ${ev.description}">Delete</button>
             </div>
           </div>
         </div>
