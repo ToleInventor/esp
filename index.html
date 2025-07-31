@@ -397,23 +397,23 @@
 </head>
 <body>
   <div class="header">
-    <div id="digital-clock"></div>
+    <div id="digital-clock" aria-live="polite" aria-atomic="true" role="timer"></div>
     MANAGE BELL EVENTS
 
-    <div class="header-links" role="navigation" aria-label="Main navigation">
+    <nav class="header-links" aria-label="Main navigation">
       <a href="settings.html" title="Settings" tabindex="0">Settings</a>
       <a href="todays-events.html" title="Today's Events" tabindex="0">Today's Events</a>
       <a href="todays-events.html" title="View Today's Events" class="btn-view-today" tabindex="0" role="button">View Today's Events</a>
-    </div>
+    </nav>
   </div>
 
-  <div class="current-alarms" aria-live="polite" aria-atomic="true">
+  <main class="current-alarms" aria-live="polite" aria-atomic="true">
     <h2><i class="fa-regular fa-bell"></i> Normal Events</h2>
     <div id="normal-events-list"><span class="no-events">Loading normal events...</span></div>
 
     <h2><i class="fa-solid fa-star"></i> Special Events</h2>
     <div id="special-events-list"><span class="no-events">Loading special events...</span></div>
-  </div>
+  </main>
 
   <!-- Edit event panel -->
   <section id="edit-panel" aria-live="polite" aria-atomic="true" aria-label="Edit event details">
@@ -497,8 +497,9 @@
   </footer>
 
   <script>
-    const API_BASE = "http://localhost:5000/api";
+    const API_BASE = "http://192.168.100.61:5000/api";
 
+    // Update digital clock every second
     function updateClock() {
       const clock = document.getElementById("digital-clock");
       const now = new Date();
@@ -552,6 +553,7 @@
         if (!res.ok) throw new Error("Failed to fetch normal events");
         return await res.json();
       } catch (e) {
+        console.error(e);
         return [];
       }
     }
@@ -562,6 +564,7 @@
         if (!res.ok) throw new Error("Failed to fetch special events");
         return await res.json();
       } catch (e) {
+        console.error(e);
         return [];
       }
     }
@@ -677,8 +680,9 @@
     function hideEditPanel() {
       const panel = document.getElementById("edit-panel");
       panel.style.display = "none";
-      document.getElementById("edit-error").style.display = "none";
-      document.getElementById("edit-error").textContent = "";
+      const editError = document.getElementById("edit-error");
+      editError.style.display = "none";
+      editError.textContent = "";
       document.getElementById("edit-form").reset();
     }
 
@@ -800,10 +804,6 @@
     };
 
     window.onload = () => {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme)
-        document.documentElement.setAttribute("data-theme", savedTheme);
-
       updateClock();
       setInterval(updateClock, 1000);
 
