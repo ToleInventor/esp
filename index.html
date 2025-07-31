@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Smart Bell System | All Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&family=Montserrat:wght@700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #daf0ff 100%);
+      --text-color: #232b33;
+      --card-bg: #ffffffcc;
+      --accent: #287ee6;
+      --accent-light: #61a0ee;
+      --header-gradient: linear-gradient(90deg, #287ee6 0%, #43e97b 100%);
+      --shadow-card: 0 8px 32px 0 rgba(60, 90, 130, 0.15);
+      --shadow-btn: 0 4px 12px 0 rgba(40, 126, 230, 0.12);
+    }
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #2a2b38 0%, #1a272e 100%);
+      --text-color: #e0f6ff;
+      --card-bg: #222231cc;
+      --accent: #43e97b;
+      --accent-light: #2979ff;
+      --header-gradient: linear-gradient(90deg, #1f4c70 0%, #43e97b 100%);
+      --shadow-card: 0 8px 40px 0 rgba(20,40,70,0.35);
+      --shadow-btn: 0 4px 14px 0 rgba(67,233,123,0.18);
+    }
+    html,
+    body {
+      height: 100%;
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      margin: 0;
+      font-family: "Roboto", sans-serif;
+      transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s;
+    }
+    .header {
+      background: var(--header-gradient);
+      color: #fff;
+      font-size: 2rem;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-card);
+      padding: 30px 40px 24px 40px;
+      text-align: center;
+      margin: 35px 0 35px 0;
+      position: relative;
+    }
+    .header a {
+      position: absolute;
+      right: 34px;
+      top: 36px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: "Montserrat", sans-serif;
+      background: rgba(255, 255, 255, 0.13);
+      padding: 7px 14px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px 0 rgba(40, 126, 230, 0.04);
+      transition: background 0.3s, color 0.15s;
+    }
+    .header a:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    #digital-clock {
+      font-size: 1.3rem;
+      margin-bottom: 7px;
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #e3ffd9;
+      text-shadow: 0 2px 7px rgba(40, 126, 230, 0.14);
+      animation: fadein-up 900ms;
+    }
+    .current-alarms {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-card);
+      padding: 40px 40px 35px 40px;
+      max-width: 680px;
+      margin: 0 auto 24px auto;
+      backdrop-filter: blur(2.5px);
+      animation: fadein-up 1.2s;
+      transition: background 0.3s;
+    }
+    @keyframes fadein-up {
+      0% {
+        opacity: 0;
+        transform: translateY(32px);
+      }
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+    .current-alarms h2 {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 1.27rem;
+      color: var(--accent);
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 1px;
+    }
+    #normal-events-list,
+    #special-events-list {
+      min-height: 70px;
+      margin-bottom: 32px;
+      padding: 20px 16px;
+      background: rgba(97, 160, 238, 0.065);
+      border-radius: 13px;
+      box-shadow: 0 3px 10px rgba(40, 126, 230, 0.06);
+      font-size: 1.07rem;
+      transition: background 0.2s;
+      animation: fadein-up 1.35s;
+    }
+    .event-card {
+      background: rgba(255, 255, 255, 0.85);
+      margin-bottom: 17px;
+      border-radius: 9px;
+      box-shadow: 0 1px 8px 0 rgba(40, 126, 230, 0.07);
+      padding: 14px 18px 13px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+      transition: box-shadow 0.22s;
+      animation: fadein-up 1.3s;
+    }
+    .event-card i {
+      font-size: 1.33rem;
+      color: var(--accent);
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+    .event-details {
+      flex: 1;
+    }
+    .event-title {
+      font-weight: bold;
+      font-size: 1.09rem;
+      letter-spacing: 0.7px;
+      margin-bottom: 4px;
+    }
+    .event-meta {
+      font-size: 0.98rem;
+      color: #4660aa;
+      font-style: italic;
+      margin-bottom: 6px;
+    }
+    .event-status {
+      font-size: 0.95rem;
+      color: #348060;
+      margin-top: 2px;
+      opacity: 0.88;
+    }
+    .event-card.done .event-status {
+      color: #6fbf73;
+      font-weight: 700;
+      opacity: 1;
+    }
+    .event-card.pending .event-status {
+      color: #f59e42;
+      font-weight: 700;
+    }
+    .no-events {
+      font-style: italic;
+      color: #888aa9;
+      padding: 8px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    /* Buttons for edit & delete */
+    .btn-group {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .btn-edit,
+    .btn-delete {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background-color 0.25s ease;
+      user-select: none;
+    }
+    .btn-edit {
+      background-color: #287ee6;
+      color: white;
+    }
+    .btn-edit:hover {
+      background-color: #1e5ab3;
+    }
+    .btn-delete {
+      background-color: #e63f3f;
+      color: white;
+    }
+    .btn-delete:hover {
+      background-color: #b82b2b;
+    }
+    .bottom {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 20px 30px;
+      border-radius: 50%;
+      font-size: 2rem;
+      box-shadow: var(--shadow-btn);
+      cursor: pointer;
+      transition: background 0.25s, box-shadow 0.18s;
+      margin-top: 23px;
+    }
+    .bottom:hover {
+      background: var(--accent-light);
+      box-shadow: 0 6px 24px var(--accent-light);
+    }
+    footer {
+      margin-top: 35px;
+      text-align: center;
+      color: #5e7996;
+      font-size: 1.07rem;
+      opacity: 0.75;
+      letter-spacing: 0.1px;
+    }
+    @media (max-width: 700px) {
+      .current-alarms {
+        padding: 19px 5vw 20px 5vw;
+      }
+      .header {
+        font-size: 1.3rem;
+        padding: 16px 12px 12px 12px;
+      }
+      .header a {
+        right: 13px;
+        top: 18px;
+        font-size: 0.97rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div id="digital-clock"></div>
+    MANAGE BELL EVENTS
+    <a href="todays-events.html">Today's Events</a>
+    <a href="settings.html" style="right: 130px; position: absolute; top: 36px; font-size: 18px; color:#fff; font-family: 'Montserrat', sans-serif; background: rgba(255,255,255,0.13); padding: 7px 14px; border-radius: 8px; text-decoration:none; box-shadow: 0 1px 4px 0 rgba(40,126,230,0.04); transition: background 0.3s, color 0.15s;">Settings</a>
+  </div>
+
+  <div class="current-alarms">
+    <h2><i class="fa-regular fa-bell"></i> Normal Events</h2>
+    <div id="normal-events-list"><span class="no-events">Loading normal events...</span></div>
+
+    <h2><i class="fa-solid fa-star"></i> Special Events</h2>
+    <div id="special-events-list"><span class="no-events">Loading special events...</span></div>
+  </div>
+
+  <footer>
+    <a href="ADD NEW EVENT.html">
+      <button id="weka-alarm" class="bottom">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+    </a>
+  </footer>
+
+  <script>
+    const API_BASE = "http://localhost:5000/api";
+
+    // Helper to render normal event cards with edit/delete buttons
+    function renderNormalEvent(ev) {
+      const freq = Array.isArray(ev.frequency)
+        ? ev.frequency.join(", ")
+        : ev.frequency;
+      return `
+        <div class="event-card" data-id="${ev.id}" data-type="normal">
+          <i class="fa-regular fa-bell"></i>
+          <div class="event-details">
+            <div class="event-title">${ev.title} — <span style="color:#287ee6">${ev.time}</span></div>
+            <div class="event-meta"><i class="fa-solid fa-calendar-days"></i> Days: ${freq}</div>
+            ${
+              ev.active
+                ? `<div class="event-status">Active</div>`
+                : `<div class="event-status" style="color:#888a99;">Inactive</div>`
+            }
+            <div class="btn-group">
+              <button class="btn-edit" data-id="${ev.id}" data-type="normal">Edit</button>
+              <button class="btn-delete" data-id="${ev.id}" data-type="normal">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper to render special event cards with edit/delete buttons
+    function renderSpecialEvent(ev) {
+      const statusClass = ev.completed ? "done" : "pending";
+      const status = ev.completed ? "✅ Done" : "⏳ Pending";
+      return `
+        <div class="event-card ${statusClass}" data-id="${ev.id}" data-type="special">
+          <i class="fa-solid fa-star"></i>
+          <div class="event-details">
+            <div class="event-title">${ev.description} — <span style="color:#43e97b">${ev.time}</span></div>
+            <div class="event-meta"><i class="fa-solid fa-calendar-day"></i> ${ev.date}</div>
+            <div class="event-status">${status}</div>
+            <div class="btn-group">
+              <button class="btn-edit" data-id="${ev.id}" data-type="special">Edit</button>
+              <button class="btn-delete" data-id="${ev.id}" data-type="special">Delete</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function fetchNormalEvents() {
+      try {
+        const res = await fetch(`${API_BASE}/normalEvents`);
+        if (!res.ok) throw new Error("Failed to fetch normal events");
+        return await res.json();
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function fetchSpecialEvents() {
+      try {
+        const res = await fetch(`${API_BASE}/specialEvents`);
+        if (!res.ok) throw new Error("Failed to fetch special events");
+        return await res.json();
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function populateEvents() {
+      const normalList = document.getElementById("normal-events-list");
+      const specialList = document.getElementById("special-events-list");
+
+      const normalEvents = await fetchNormalEvents();
+      normalList.innerHTML = normalEvents.length
+        ? normalEvents.map(renderNormalEvent).join("")
+        : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No normal events scheduled.</span>`;
+
+      const specialEvents = await fetchSpecialEvents();
+      specialList.innerHTML = specialEvents.length
+        ? specialEvents.map(renderSpecialEvent).join("")
+        : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No special events scheduled.</span>`;
+
+      // Attach event listeners to Edit/Delete buttons
+      attachEventButtonsListeners();
+    }
+
+    // Edit/Delete button handlers (placeholders)
+    function attachEventButtonsListeners() {
+      document.querySelectorAll(".btn-edit").forEach((btn) => {
+        btn.onclick = () => {
+          const id = btn.dataset.id;
+          const type = btn.dataset.type;
+          alert(`Edit ${type} event with ID = ${id} - implement your edit form/page here.`);
+          // TODO: implement edit behavior or open a modal/page with the event data
+        };
+      });
+
+      document.querySelectorAll(".btn-delete").forEach((btn) => {
+        btn.onclick = async () => {
+          const id = btn.dataset.id;
+          const type = btn.dataset.type;
+          if (!confirm(`Confirm delete of ${type} event ID ${id}?`)) return;
+          try {
+            const res = await fetch(`${API_BASE}/${type}Events/${id}`, {
+              method: "DELETE",
+            });
+            const data = await res.json();
+            if (res.ok) {
+              alert(data.message || "Deleted successfully");
+              populateEvents();
+            } else {
+              alert(`Delete failed: ${data.error || "Unknown error"}`);
+            }
+          } catch (err) {
+            alert("Error deleting event: " + err);
+          }
+        };
+      });
+    }
+
+    function updateClock() {
+      const clock = document.getElementById("digital-clock");
+      const now = new Date();
+      clock.innerText = now.toLocaleTimeString();
+    }
+
+    window.onload = () => {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme)
+        document.documentElement.setAttribute("data-theme", savedTheme);
+
+      updateClock();
+      setInterval(updateClock, 1000);
+
+      populateEvents();
+    };
+  </script>
+</body>
+</html>
