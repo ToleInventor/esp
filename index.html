@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Smart Bell System | All Events</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&family=Montserrat:wght@700&display=swap"
     rel="stylesheet"
@@ -14,6 +14,8 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
   />
   <style>
+    /* Your existing styles from before here, plus: */
+
     :root {
       --bg-gradient: linear-gradient(135deg, #f0f4f8 0%, #daf0ff 100%);
       --text-color: #232b33;
@@ -44,6 +46,8 @@
       font-family: "Roboto", sans-serif;
       transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s;
     }
+
+    /* Header Links Container */
     .header {
       background: var(--header-gradient);
       color: #fff;
@@ -55,13 +59,11 @@
       box-shadow: var(--shadow-card);
       padding: 30px 40px 24px 40px;
       text-align: center;
-      margin: 35px 0 35px 0;
+      margin: 35px 0 20px 0;
       position: relative;
     }
     .header a {
       position: absolute;
-      right: 34px;
-      top: 36px;
       color: #fff;
       text-decoration: none;
       font-size: 18px;
@@ -71,11 +73,23 @@
       border-radius: 8px;
       box-shadow: 0 1px 4px 0 rgba(40, 126, 230, 0.04);
       transition: background 0.3s, color 0.15s;
+      top: 36px;
     }
     .header a:hover {
       background: var(--accent);
       color: #fff;
     }
+    /* Position each link explicitly */
+    .link-settings {
+      right: 34px;
+    }
+    .link-todays {
+      right: 180px;
+    }
+    .link-view-today {
+      right: 310px;
+    }
+
     #digital-clock {
       font-size: 1.3rem;
       margin-bottom: 7px;
@@ -188,6 +202,7 @@
       font-size: 1rem;
       text-align: center;
     }
+
     /* Buttons for edit & delete */
     .btn-group {
       margin-top: 12px;
@@ -220,6 +235,7 @@
     .btn-delete:hover {
       background-color: #b82b2b;
     }
+
     .bottom {
       background: var(--accent);
       color: white;
@@ -236,6 +252,7 @@
       background: var(--accent-light);
       box-shadow: 0 6px 24px var(--accent-light);
     }
+
     footer {
       margin-top: 35px;
       text-align: center;
@@ -244,6 +261,96 @@
       opacity: 0.75;
       letter-spacing: 0.1px;
     }
+
+    /* EDIT PANEL styles */
+    #edit-panel {
+      max-width: 680px;
+      margin: 24px auto;
+      padding: 25px 30px;
+      border-radius: 20px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow-card);
+      backdrop-filter: blur(2.5px);
+      font-size: 1.07rem;
+      animation: fadein-up 1s;
+      display: none; /* hidden by default */
+    }
+    #edit-panel h3 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: var(--accent);
+      font-weight: 700;
+      font-family: "Montserrat", sans-serif;
+    }
+    #edit-panel label {
+      display: block;
+      margin-top: 14px;
+      font-weight: 600;
+    }
+    #edit-panel input[type="text"],
+    #edit-panel input[type="time"],
+    #edit-panel input[type="date"],
+    #edit-panel select {
+      margin-top: 6px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 100%;
+      border-radius: 7px;
+      border: 1.5px solid #aaa;
+      transition: border-color 0.25s ease;
+      box-sizing: border-box;
+      font-family: "Roboto", sans-serif;
+    }
+    #edit-panel input[type="checkbox"] {
+      margin-left: 6px;
+      cursor: pointer;
+      width: auto;
+      height: 18px;
+      vertical-align: middle;
+    }
+    #edit-panel button {
+      margin-top: 24px;
+      padding: 14px 26px;
+      border-radius: 9px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #edit-panel button:hover {
+      background: var(--accent-light);
+    }
+    #edit-cancel {
+      background: #e63f3f;
+      margin-left: 10px;
+      padding: 14px 22px;
+    }
+    #edit-cancel:hover {
+      background: #b82b2b;
+    }
+    .error-message {
+      color: #e63f3f;
+      margin-top: 8px;
+      font-weight: 600;
+      display: none;
+    }
+    /* Multi-select frequency (checkbox group) style for edit form */
+    #edit-frequency-group {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #edit-frequency-group label {
+      font-weight: normal;
+      font-size: 0.91rem;
+      user-select: none;
+    }
+
     @media (max-width: 700px) {
       .current-alarms {
         padding: 19px 5vw 20px 5vw;
@@ -257,6 +364,9 @@
         top: 18px;
         font-size: 0.97rem;
       }
+      #edit-panel {
+        padding: 20px 20px;
+      }
     }
   </style>
 </head>
@@ -264,8 +374,13 @@
   <div class="header">
     <div id="digital-clock"></div>
     MANAGE BELL EVENTS
-    <a href="todays-events.html">Today's Events</a>
-    <a href="settings.html" style="right: 130px; position: absolute; top: 36px; font-size: 18px; color:#fff; font-family: 'Montserrat', sans-serif; background: rgba(255,255,255,0.13); padding: 7px 14px; border-radius: 8px; text-decoration:none; box-shadow: 0 1px 4px 0 rgba(40,126,230,0.04); transition: background 0.3s, color 0.15s;">Settings</a>
+    <a href="settings.html" class="link-settings">Settings</a>
+    <a href="todays-events.html" class="link-todays">Today's Events</a>
+    <a href="todays-events.html" class="link-view-today" title="View Today's Events">
+      <button style="font-size: 1rem; padding: 6px 12px; border-radius: 7px; border: none; cursor:pointer; background:#fff; color: var(--accent); font-weight:bold; box-shadow: 0 2px 6px rgba(40, 126, 230, 0.2);">
+        View Today's Events
+      </button>
+    </a>
   </div>
 
   <div class="current-alarms">
@@ -276,18 +391,95 @@
     <div id="special-events-list"><span class="no-events">Loading special events...</span></div>
   </div>
 
+  <!-- Edit event panel - hidden by default -->
+  <section id="edit-panel" aria-live="polite">
+    <h3>Edit Event</h3>
+    <form id="edit-form" novalidate>
+      <input type="hidden" id="edit-id" />
+      <input type="hidden" id="edit-type" />
+
+      <!-- Normal Event fields -->
+      <div id="edit-normal-fields" class="edit-fields">
+        <label for="edit-title">Title *</label>
+        <input type="text" id="edit-title" required />
+
+        <label for="edit-time">Time *</label>
+        <input type="time" id="edit-time" required />
+
+        <label for="edit-delay">Delay (seconds)</label>
+        <input type="text" id="edit-delay" />
+
+        <label for="edit-tone">Tone *</label>
+        <select id="edit-tone" required>
+          <option value="">Select a tone</option>
+          <option value="tone1">Tone 1</option>
+          <option value="tone2">Tone 2</option>
+          <option value="tone3">Tone 3</option>
+        </select>
+
+        <label>
+          <input type="checkbox" id="edit-active" />
+          Active
+        </label>
+
+        <label>Frequency *</label>
+        <div id="edit-frequency-group" aria-label="Select frequency days">
+          <label><input type="checkbox" value="monday" /> Monday</label>
+          <label><input type="checkbox" value="tuesday" /> Tuesday</label>
+          <label><input type="checkbox" value="wednesday" /> Wednesday</label>
+          <label><input type="checkbox" value="thursday" /> Thursday</label>
+          <label><input type="checkbox" value="friday" /> Friday</label>
+          <label><input type="checkbox" value="saturday" /> Saturday</label>
+          <label><input type="checkbox" value="sunday" /> Sunday</label>
+        </div>
+      </div>
+
+      <!-- Special Event fields -->
+      <div id="edit-special-fields" class="edit-fields" style="display:none;">
+        <label for="edit-date">Date *</label>
+        <input type="date" id="edit-date" required />
+
+        <label for="edit-time-special">Time *</label>
+        <input type="time" id="edit-time-special" required />
+
+        <label for="edit-description">Description *</label>
+        <input type="text" id="edit-description" required />
+
+        <label for="edit-tone-special">Tone *</label>
+        <select id="edit-tone-special" required>
+          <option value="">Select a tone</option>
+          <option value="tone1">Tone 1</option>
+          <option value="tone2">Tone 2</option>
+          <option value="tone3">Tone 3</option>
+        </select>
+
+        <label>
+          <input type="checkbox" id="edit-completed" />
+          Completed
+        </label>
+      </div>
+
+      <div id="edit-error" class="error-message"></div>
+
+      <button type="submit">Save Changes</button>
+      <button type="button" id="edit-cancel">Cancel</button>
+    </form>
+  </section>
+
   <footer>
-    <a href="ADD NEW EVENT.html">
-      <button id="weka-alarm" class="bottom">
-        <i class="fa-solid fa-plus"></i>
-      </button>
-    </a>
+    &copy; 2025 Smart Bell System
   </footer>
 
   <script>
     const API_BASE = "http://localhost:5000/api";
 
-    // Helper to render normal event cards with edit/delete buttons
+    function updateClock() {
+      const clock = document.getElementById("digital-clock");
+      const now = new Date();
+      clock.innerText = now.toLocaleTimeString();
+    }
+
+    // Render functions same as before
     function renderNormalEvent(ev) {
       const freq = Array.isArray(ev.frequency)
         ? ev.frequency.join(", ")
@@ -312,7 +504,6 @@
       `;
     }
 
-    // Helper to render special event cards with edit/delete buttons
     function renderSpecialEvent(ev) {
       const statusClass = ev.completed ? "done" : "pending";
       const status = ev.completed ? "✅ Done" : "⏳ Pending";
@@ -366,21 +557,21 @@
         ? specialEvents.map(renderSpecialEvent).join("")
         : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No special events scheduled.</span>`;
 
-      // Attach event listeners to Edit/Delete buttons
       attachEventButtonsListeners();
     }
 
-    // Edit/Delete button handlers (placeholders)
+    // Attach Edit/Delete listeners
     function attachEventButtonsListeners() {
+      // Edit buttons
       document.querySelectorAll(".btn-edit").forEach((btn) => {
-        btn.onclick = () => {
+        btn.onclick = async () => {
           const id = btn.dataset.id;
           const type = btn.dataset.type;
-          alert(`Edit ${type} event with ID = ${id} - implement your edit form/page here.`);
-          // TODO: implement edit behavior or open a modal/page with the event data
+          showEditPanel(id, type);
         };
       });
 
+      // Delete buttons
       document.querySelectorAll(".btn-delete").forEach((btn) => {
         btn.onclick = async () => {
           const id = btn.dataset.id;
@@ -394,6 +585,7 @@
             if (res.ok) {
               alert(data.message || "Deleted successfully");
               populateEvents();
+              hideEditPanel();
             } else {
               alert(`Delete failed: ${data.error || "Unknown error"}`);
             }
@@ -404,11 +596,199 @@
       });
     }
 
-    function updateClock() {
-      const clock = document.getElementById("digital-clock");
-      const now = new Date();
-      clock.innerText = now.toLocaleTimeString();
+    // Show edit panel with event data loaded
+    async function showEditPanel(id, type) {
+      const panel = document.getElementById("edit-panel");
+      const editError = document.getElementById("edit-error");
+      editError.style.display = "none";
+      editError.textContent = "";
+
+      // Fetch current event data from backend
+      try {
+        const res = await fetch(`${API_BASE}/${type}Events/${id}`);
+        if (!res.ok) throw new Error("Event fetch failed");
+        const ev = await res.json();
+
+        // Common hidden fields
+        document.getElementById("edit-id").value = id;
+        document.getElementById("edit-type").value = type;
+
+        // Show/hide fields based on type
+        if (type === "normal") {
+          document.getElementById("edit-normal-fields").style.display = "";
+          document.getElementById("edit-special-fields").style.display = "none";
+
+          document.getElementById("edit-title").value = ev.title || "";
+          document.getElementById("edit-time").value = ev.time || "";
+          document.getElementById("edit-delay").value = ev.delay || 0;
+          document.getElementById("edit-tone").value = ev.tone || "";
+          document.getElementById("edit-active").checked = ev.active;
+
+          // Set frequency checkboxes
+          let freqArr = ev.frequency || [];
+          if (typeof freqArr === "string") {
+            try {
+              freqArr = JSON.parse(freqArr);
+            } catch {
+              freqArr = [];
+            }
+          }
+          const checkboxes = document.querySelectorAll(
+            "#edit-frequency-group input[type=checkbox]"
+          );
+          checkboxes.forEach((cb) => {
+            cb.checked = freqArr.includes(cb.value);
+          });
+        } else if (type === "special") {
+          document.getElementById("edit-normal-fields").style.display = "none";
+          document.getElementById("edit-special-fields").style.display = "";
+
+          document.getElementById("edit-date").value = ev.date || "";
+          document.getElementById("edit-time-special").value = ev.time || "";
+          document.getElementById("edit-description").value = ev.description || "";
+          document.getElementById("edit-tone-special").value = ev.tone || "";
+          document.getElementById("edit-completed").checked = ev.completed;
+        }
+
+        panel.style.display = "block";
+
+        // Scroll to edit panel for user convenience
+        panel.scrollIntoView({ behavior: "smooth" });
+      } catch (err) {
+        alert("Failed to load event data for editing");
+      }
     }
+
+    // Hide edit panel and clear form
+    function hideEditPanel() {
+      const panel = document.getElementById("edit-panel");
+      panel.style.display = "none";
+      document.getElementById("edit-error").style.display = "none";
+      document.getElementById("edit-error").textContent = "";
+      document.getElementById("edit-form").reset();
+    }
+
+    // Handle edit form submit (PUT update)
+    document.getElementById("edit-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("edit-id").value;
+      const type = document.getElementById("edit-type").value;
+      const errorDiv = document.getElementById("edit-error");
+      errorDiv.style.display = "none";
+      errorDiv.textContent = "";
+
+      if (type === "normal") {
+        // Gather normal event data
+        const title = document.getElementById("edit-title").value.trim();
+        const time = document.getElementById("edit-time").value;
+        const delayStr = document.getElementById("edit-delay").value.trim();
+        const tone = document.getElementById("edit-tone").value;
+        const active = document.getElementById("edit-active").checked;
+
+        const freqCheckboxes = document.querySelectorAll(
+          "#edit-frequency-group input[type=checkbox]"
+        );
+        const frequency = Array.from(freqCheckboxes)
+          .filter((cb) => cb.checked)
+          .map((cb) => cb.value.toLowerCase());
+
+        // Validation
+        if (!title || !time || !tone) {
+          errorDiv.textContent = "Please fill in all required fields.";
+          errorDiv.style.display = "block";
+          return;
+        }
+        if (frequency.length === 0) {
+          errorDiv.textContent = "Select at least one frequency day.";
+          errorDiv.style.display = "block";
+          return;
+        }
+        const delay = parseInt(delayStr) || 0;
+        if (delay < 0) {
+          errorDiv.textContent = "Delay cannot be negative.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        const payload = {
+          title,
+          time,
+          delay,
+          tone,
+          active,
+          frequency,
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/normalEvents/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            alert("Normal event updated successfully!");
+            populateEvents();
+            hideEditPanel();
+          } else {
+            errorDiv.textContent = data.error || "Update failed.";
+            errorDiv.style.display = "block";
+          }
+        } catch (err) {
+          errorDiv.textContent = "Error updating event.";
+          errorDiv.style.display = "block";
+        }
+      } else if (type === "special") {
+        // Gather special event data
+        const date = document.getElementById("edit-date").value;
+        const time = document.getElementById("edit-time-special").value;
+        const description = document.getElementById("edit-description").value.trim();
+        const tone = document.getElementById("edit-tone-special").value;
+        const completed = document.getElementById("edit-completed").checked;
+
+        if (!date || !time || !description || !tone) {
+          errorDiv.textContent = "Please fill in all required fields.";
+          errorDiv.style.display = "block";
+          return;
+        }
+
+        const payload = {
+          date,
+          time,
+          description,
+          tone,
+          completed,
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/specialEvents/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            alert("Special event updated successfully!");
+            populateEvents();
+            hideEditPanel();
+          } else {
+            errorDiv.textContent = data.error || "Update failed.";
+            errorDiv.style.display = "block";
+          }
+        } catch (err) {
+          errorDiv.textContent = "Error updating event.";
+          errorDiv.style.display = "block";
+        }
+      }
+    });
+
+    // Cancel button hides edit panel
+    document.getElementById("edit-cancel").onclick = (e) => {
+      e.preventDefault();
+      hideEditPanel();
+    };
 
     window.onload = () => {
       const savedTheme = localStorage.getItem("theme");
