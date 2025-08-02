@@ -494,319 +494,324 @@
     </a>
   </footer>
 
-  <script>
-    const API_BASE = "http://localhost:5000/api";
+<script>
+  const API_BASE = "http://localhost:5000/api";
 
-    // Update digital clock every second
-    function updateClock() {
-      const clock = document.getElementById("digital-clock");
-      const now = new Date();
-      clock.innerText = now.toLocaleTimeString();
-    }
+  // Update digital clock every second
+  function updateClock() {
+    const clock = document.getElementById("digital-clock");
+    const now = new Date();
+    clock.innerText = now.toLocaleTimeString();
+  }
 
-    function renderNormalEvent(ev) {
-      const freq = Array.isArray(ev.frequency) ? ev.frequency.join(", ") : ev.frequency;
-      return `
-        <div class="event-card" data-id="${ev.id}" data-type="normal">
-          <i class="fa-regular fa-bell"></i>
-          <div class="event-details">
-            <div class="event-title">${ev.title} — <span style="color:#287ee6">${ev.time}</span></div>
-            <div class="event-meta"><i class="fa-solid fa-calendar-days"></i> Days: ${freq}</div>
-            ${
-              ev.active
-                ? `<div class="event-status">Active</div>`
-                : `<div class="event-status" style="color:#888a99;">Inactive</div>`
-            }
-            <div class="btn-group">
-              <button class="btn-edit" data-id="${ev.id}" data-type="normal" aria-label="Edit normal event ${ev.title}">Edit</button>
-              <button class="btn-delete" data-id="${ev.id}" data-type="normal" aria-label="Delete normal event ${ev.title}">Delete</button>
-            </div>
+  // Render normal event card
+  function renderNormalEvent(ev) {
+    const freq = Array.isArray(ev.frequency) ? ev.frequency.join(", ") : ev.frequency;
+    return `
+      <div class="event-card" data-id="${ev.id}" data-type="normal">
+        <i class="fa-regular fa-bell"></i>
+        <div class="event-details">
+          <div class="event-title">${ev.title} — <span style="color:#287ee6">${ev.time}</span></div>
+          <div class="event-meta"><i class="fa-solid fa-calendar-days"></i> Days: ${freq}</div>
+          ${
+            ev.active
+              ? `<div class="event-status">Active</div>`
+              : `<div class="event-status" style="color:#888a99;">Inactive</div>`
+          }
+          <div class="btn-group">
+            <button class="btn-edit" data-id="${ev.id}" data-type="normal">Edit</button>
+            <button class="btn-delete" data-id="${ev.id}" data-type="normal">Delete</button>
           </div>
         </div>
-      `;
-    }
+      </div>
+    `;
+  }
 
-    function renderSpecialEvent(ev) {
-      const statusClass = ev.completed ? "done" : "pending";
-      const status = ev.completed ? "✅ Done" : "⏳ Pending";
-      return `
-        <div class="event-card ${statusClass}" data-id="${ev.id}" data-type="special">
-          <i class="fa-solid fa-star"></i>
-          <div class="event-details">
-            <div class="event-title">${ev.description} — <span style="color:#43e97b">${ev.time}</span></div>
-            <div class="event-meta"><i class="fa-solid fa-calendar-day"></i> ${ev.date}</div>
-            <div class="event-status">${status}</div>
-            <div class="btn-group">
-              <button class="btn-edit" data-id="${ev.id}" data-type="special" aria-label="Edit special event ${ev.description}">Edit</button>
-              <button class="btn-delete" data-id="${ev.id}" data-type="special" aria-label="Delete special event ${ev.description}">Delete</button>
-            </div>
+  // Render special event card
+  function renderSpecialEvent(ev) {
+    const statusClass = ev.completed ? "done" : "pending";
+    const status = ev.completed ? "✅ Done" : "⏳ Pending";
+    return `
+      <div class="event-card ${statusClass}" data-id="${ev.id}" data-type="special">
+        <i class="fa-solid fa-star"></i>
+        <div class="event-details">
+          <div class="event-title">${ev.description} — <span style="color:#43e97b">${ev.time}</span></div>
+          <div class="event-meta"><i class="fa-solid fa-calendar-day"></i> ${ev.date}</div>
+          <div class="event-status">${status}</div>
+          <div class="btn-group">
+            <button class="btn-edit" data-id="${ev.id}" data-type="special">Edit</button>
+            <button class="btn-delete" data-id="${ev.id}" data-type="special">Delete</button>
           </div>
         </div>
-      `;
+      </div>
+    `;
+  }
+
+  // Fetch normal events
+  async function fetchNormalEvents() {
+    try {
+      const res = await fetch(`${API_BASE}/normalEvents`);
+      if (!res.ok) throw new Error("Failed to fetch normal events");
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return [];
     }
+  }
 
-    async function fetchNormalEvents() {
-      try {
-        const res = await fetch(`${API_BASE}/normalEvents`);
-        if (!res.ok) throw new Error("Failed to fetch normal events");
-        return await res.json();
-      } catch (e) {
-        console.error(e);
-        return [];
-      }
+  // Fetch special events
+  async function fetchSpecialEvents() {
+    try {
+      const res = await fetch(`${API_BASE}/specialEvents`);
+      if (!res.ok) throw new Error("Failed to fetch special events");
+      return await res.json();
+    } catch (e) {
+      console.error(e);
+      return [];
     }
+  }
 
-    async function fetchSpecialEvents() {
-      try {
-        const res = await fetch(`${API_BASE}/specialEvents`);
-        if (!res.ok) throw new Error("Failed to fetch special events");
-        return await res.json();
-      } catch (e) {
-        console.error(e);
-        return [];
-      }
-    }
+  // Populate event lists
+  async function populateEvents() {
+    const normalList = document.getElementById("normal-events-list");
+    const specialList = document.getElementById("special-events-list");
 
-    async function populateEvents() {
-      const normalList = document.getElementById("normal-events-list");
-      const specialList = document.getElementById("special-events-list");
+    const normalEvents = await fetchNormalEvents();
+    normalList.innerHTML = normalEvents.length
+      ? normalEvents.map(renderNormalEvent).join("")
+      : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No normal events scheduled.</span>`;
 
-      const normalEvents = await fetchNormalEvents();
-      normalList.innerHTML = normalEvents.length
-        ? normalEvents.map(renderNormalEvent).join("")
-        : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No normal events scheduled.</span>`;
+    const specialEvents = await fetchSpecialEvents();
+    specialList.innerHTML = specialEvents.length
+      ? specialEvents.map(renderSpecialEvent).join("")
+      : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No special events scheduled.</span>`;
 
-      const specialEvents = await fetchSpecialEvents();
-      specialList.innerHTML = specialEvents.length
-        ? specialEvents.map(renderSpecialEvent).join("")
-        : `<span class="no-events"><i class="fa-regular fa-face-smile-wink"></i> No special events scheduled.</span>`;
+    attachEventButtonsListeners();
+  }
 
-      attachEventButtonsListeners();
-    }
-
-    function attachEventButtonsListeners() {
-      // Edit buttons
-      document.querySelectorAll(".btn-edit").forEach((btn) => {
-        btn.onclick = async () => {
-          const id = btn.dataset.id;
-          const type = btn.dataset.type;
-          showEditPanel(id, type);
-        };
-      });
-
-      // Delete buttons
-      document.querySelectorAll(".btn-delete").forEach((btn) => {
-        btn.onclick = async () => {
-          const id = btn.dataset.id;
-          const type = btn.dataset.type;
-          if (!confirm(`Confirm delete of ${type} event ID ${id}?`)) return;
-          try {
-            const res = await fetch(`${API_BASE}/${type}Events/${id}`, {
-              method: "DELETE",
-            });
-            const data = await res.json();
-            if (res.ok) {
-              alert(data.message || "Deleted successfully");
-              populateEvents();
-              hideEditPanel();
-            } else {
-              alert(`Delete failed: ${data.error || "Unknown error"}`);
-            }
-          } catch (err) {
-            alert("Error deleting event: " + err);
-          }
-        };
-      });
-    }
-
-    async function showEditPanel(id, type) {
-      const panel = document.getElementById("edit-panel");
-      const editError = document.getElementById("edit-error");
-      editError.style.display = "none";
-      editError.textContent = "";
-
-      try {
-        const res = await fetch(`${API_BASE}/${type}Events/${id}`);
-        if (!res.ok) throw new Error("Event fetch failed");
-        const ev = await res.json();
-
-        document.getElementById("edit-id").value = id;
-        document.getElementById("edit-type").value = type;
-
-        if (type === "normal") {
-          document.getElementById("edit-normal-fields").style.display = "";
-          document.getElementById("edit-special-fields").style.display = "none";
-
-          document.getElementById("edit-title").value = ev.title || "";
-          document.getElementById("edit-time").value = ev.time || "";
-          document.getElementById("edit-delay").value = ev.delay || 0;
-          document.getElementById("edit-tone").value = ev.tone || "";
-          document.getElementById("edit-active").checked = ev.active;
-
-          let freqArr = ev.frequency || [];
-          if (typeof freqArr === "string") {
-            try {
-              freqArr = JSON.parse(freqArr);
-            } catch {
-              freqArr = [];
-            }
-          }
-          const checkboxes = document.querySelectorAll(
-            "#edit-frequency-group input[type=checkbox]"
-          );
-          checkboxes.forEach((cb) => {
-            cb.checked = freqArr.includes(cb.value);
-          });
-        } else if (type === "special") {
-          document.getElementById("edit-normal-fields").style.display = "none";
-          document.getElementById("edit-special-fields").style.display = "";
-
-          document.getElementById("edit-date").value = ev.date || "";
-          document.getElementById("edit-time-special").value = ev.time || "";
-          document.getElementById("edit-description").value = ev.description || "";
-          document.getElementById("edit-tone-special").value = ev.tone || "";
-          document.getElementById("edit-completed").checked = ev.completed;
-        }
-
-        panel.style.display = "block";
-        panel.scrollIntoView({ behavior: "smooth" });
-      } catch (err) {
-        alert("Failed to load event data for editing");
-      }
-    }
-
-    function hideEditPanel() {
-      const panel = document.getElementById("edit-panel");
-      panel.style.display = "none";
-      const editError = document.getElementById("edit-error");
-      editError.style.display = "none";
-      editError.textContent = "";
-      document.getElementById("edit-form").reset();
-    }
-
-    document.getElementById("edit-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const id = document.getElementById("edit-id").value;
-      const type = document.getElementById("edit-type").value;
-      const errorDiv = document.getElementById("edit-error");
-      errorDiv.style.display = "none";
-      errorDiv.textContent = "";
-
-      if (type === "normal") {
-        const title = document.getElementById("edit-title").value.trim();
-        const time = document.getElementById("edit-time").value;
-        const delayStr = document.getElementById("edit-delay").value.trim();
-        const tone = document.getElementById("edit-tone").value;
-        const active = document.getElementById("edit-active").checked;
-
-        const freqCheckboxes = document.querySelectorAll(
-          "#edit-frequency-group input[type=checkbox]"
-        );
-        const frequency = Array.from(freqCheckboxes)
-          .filter((cb) => cb.checked)
-          .map((cb) => cb.value.toLowerCase());
-
-        if (!title || !time || !tone) {
-          errorDiv.textContent = "Please fill in all required fields.";
-          errorDiv.style.display = "block";
-          return;
-        }
-        if (frequency.length === 0) {
-          errorDiv.textContent = "Select at least one frequency day.";
-          errorDiv.style.display = "block";
-          return;
-        }
-        const delay = parseInt(delayStr) || 0;
-        if (delay < 0) {
-          errorDiv.textContent = "Delay cannot be negative.";
-          errorDiv.style.display = "block";
-          return;
-        }
-
-        const payload = {
-          title,
-          time,
-          delay,
-          tone,
-          active,
-          frequency,
-        };
-
-        try {
-          const res = await fetch(`${API_BASE}/normalEvents/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-
-          if (res.ok) {
-            alert("Normal event updated successfully!");
-            populateEvents();
-            hideEditPanel();
-          } else {
-            errorDiv.textContent = data.error || "Update failed.";
-            errorDiv.style.display = "block";
-          }
-        } catch (err) {
-          errorDiv.textContent = "Error updating event.";
-          errorDiv.style.display = "block";
-        }
-      } else if (type === "special") {
-        const date = document.getElementById("edit-date").value;
-        const time = document.getElementById("edit-time-special").value;
-        const description = document.getElementById("edit-description").value.trim();
-        const tone = document.getElementById("edit-tone-special").value;
-        const completed = document.getElementById("edit-completed").checked;
-
-        if (!date || !time || !description || !tone) {
-          errorDiv.textContent = "Please fill in all required fields.";
-          errorDiv.style.display = "block";
-          return;
-        }
-
-        const payload = {
-          date,
-          time,
-          description,
-          tone,
-          completed,
-        };
-
-        try {
-          const res = await fetch(`${API_BASE}/specialEvents/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-
-          if (res.ok) {
-            alert("Special event updated successfully!");
-            populateEvents();
-            hideEditPanel();
-          } else {
-            errorDiv.textContent = data.error || "Update failed.";
-            errorDiv.style.display = "block";
-          }
-        } catch (err) {
-          errorDiv.textContent = "Error updating event.";
-          errorDiv.style.display = "block";
-        }
-      }
+  // Attach edit/delete button listeners
+  function attachEventButtonsListeners() {
+    document.querySelectorAll(".btn-edit").forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+        const type = btn.dataset.type;
+        showEditPanel(id, type);
+      };
     });
 
-    document.getElementById("edit-cancel").onclick = (e) => {
-      e.preventDefault();
-      hideEditPanel();
-    };
+    document.querySelectorAll(".btn-delete").forEach((btn) => {
+      btn.onclick = async () => {
+        const id = btn.dataset.id;
+        const type = btn.dataset.type;
+        if (!confirm(`Confirm delete of ${type} event ID ${id}?`)) return;
+        try {
+          const res = await fetch(`${API_BASE}/${type}Events/${id}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (res.ok) {
+            alert(data.message || "Deleted successfully");
+            populateEvents();
+            hideEditPanel();
+          } else {
+            alert(`Delete failed: ${data.error || "Unknown error"}`);
+          }
+        } catch (err) {
+          alert("Error deleting event: " + err);
+        }
+      };
+    });
+  }
 
-    window.onload = () => {
-      updateClock();
-      setInterval(updateClock, 1000);
+  // Show edit panel
+  async function showEditPanel(id, type) {
+    const panel = document.getElementById("edit-panel");
+    const editError = document.getElementById("edit-error");
+    editError.style.display = "none";
+    editError.textContent = "";
 
-      populateEvents();
-    };
-  </script>
+    try {
+      const res = await fetch(`${API_BASE}/${type}Events/${id}`);
+      if (!res.ok) throw new Error("Event fetch failed");
+      const ev = await res.json();
+
+      document.getElementById("edit-id").value = id;
+      document.getElementById("edit-type").value = type;
+
+      if (type === "normal") {
+        document.getElementById("edit-normal-fields").style.display = "";
+        document.getElementById("edit-special-fields").style.display = "none";
+
+        document.getElementById("edit-title").value = ev.title || "";
+        document.getElementById("edit-time").value = ev.time || "";
+        document.getElementById("edit-delay").value = ev.delay || 0;
+        document.getElementById("edit-tone").value = ev.tone || "";
+        document.getElementById("edit-active").checked = ev.active;
+
+        let freqArr = ev.frequency || [];
+        if (typeof freqArr === "string") {
+          try {
+            freqArr = JSON.parse(freqArr);
+          } catch {
+            freqArr = [];
+          }
+        }
+        const checkboxes = document.querySelectorAll("#edit-frequency-group input[type=checkbox]");
+        checkboxes.forEach((cb) => {
+          cb.checked = freqArr.includes(cb.value);
+        });
+      } else if (type === "special") {
+        document.getElementById("edit-normal-fields").style.display = "none";
+        document.getElementById("edit-special-fields").style.display = "";
+
+        document.getElementById("edit-date").value = ev.date || "";
+        document.getElementById("edit-time-special").value = ev.time || "";
+        document.getElementById("edit-description").value = ev.description || "";
+        document.getElementById("edit-tone-special").value = ev.tone || "";
+        document.getElementById("edit-completed").checked = ev.completed;
+      }
+
+      panel.style.display = "block";
+      panel.scrollIntoView({ behavior: "smooth" });
+    } catch (err) {
+      alert("Failed to load event data for editing");
+    }
+  }
+
+  // Hide edit panel
+  function hideEditPanel() {
+    const panel = document.getElementById("edit-panel");
+    panel.style.display = "none";
+    const editError = document.getElementById("edit-error");
+    editError.style.display = "none";
+    editError.textContent = "";
+    document.getElementById("edit-form").reset();
+  }
+
+  // Handle edit form submission
+  document.getElementById("edit-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = document.getElementById("edit-id").value;
+    const type = document.getElementById("edit-type").value;
+    const errorDiv = document.getElementById("edit-error");
+    errorDiv.style.display = "none";
+    errorDiv.textContent = "";
+
+    if (type === "normal") {
+      const title = document.getElementById("edit-title").value.trim();
+      const time = document.getElementById("edit-time").value;
+      const delayStr = document.getElementById("edit-delay").value.trim();
+      const tone = document.getElementById("edit-tone").value;
+      const active = document.getElementById("edit-active").checked;
+
+      const freqCheckboxes = document.querySelectorAll("#edit-frequency-group input[type=checkbox]");
+      const frequency = Array.from(freqCheckboxes)
+        .filter((cb) => cb.checked)
+        .map((cb) => cb.value.toLowerCase());
+
+      if (!title || !time || !tone) {
+        errorDiv.textContent = "Please fill in all required fields.";
+        errorDiv.style.display = "block";
+        return;
+      }
+            if (frequency.length === 0) {
+        errorDiv.textContent = "Select at least one frequency day.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      const delay = parseInt(delayStr) || 0;
+      if (delay < 0) {
+        errorDiv.textContent = "Delay cannot be negative.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      const payload = {
+        title,
+        time,
+        delay,
+        tone,
+        active,
+        frequency,
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/normalEvents/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("Normal event updated successfully!");
+          populateEvents();
+          hideEditPanel();
+        } else {
+          errorDiv.textContent = data.error || "Update failed.";
+          errorDiv.style.display = "block";
+        }
+      } catch (err) {
+        errorDiv.textContent = "Error updating event.";
+        errorDiv.style.display = "block";
+      }
+    } else if (type === "special") {
+      const date = document.getElementById("edit-date").value;
+      const time = document.getElementById("edit-time-special").value;
+      const description = document.getElementById("edit-description").value.trim();
+      const tone = document.getElementById("edit-tone-special").value;
+      const completed = document.getElementById("edit-completed").checked;
+
+      if (!date || !time || !description || !tone) {
+        errorDiv.textContent = "Please fill in all required fields.";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      const payload = {
+        date,
+        time,
+        description,
+        tone,
+        completed,
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/specialEvents/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("Special event updated successfully!");
+          populateEvents();
+          hideEditPanel();
+        } else {
+          errorDiv.textContent = data.error || "Update failed.";
+          errorDiv.style.display = "block";
+        }
+      } catch (err) {
+        errorDiv.textContent = "Error updating event.";
+        errorDiv.style.display = "block";
+      }
+    }
+  });
+
+  // Cancel edit
+  document.getElementById("edit-cancel").onclick = (e) => {
+    e.preventDefault();
+    hideEditPanel();
+  };
+
+  // Initialize on page load
+  window.onload = () => {
+    updateClock();
+    setInterval(updateClock, 1000);
+    populateEvents();
+  };
+</script>
 </body>
 </html>
